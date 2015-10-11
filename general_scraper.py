@@ -21,7 +21,7 @@ class GeneralScraper:
         "Accept": "text/html,application/xhtml+xml,application/xml; q=0.9,image/webp,*/*;q=0.8"
     }
 
-    file_header = ['User;Nombre;Ubicacion;Email;Registro;Skill']
+    file_header = []  # First row of the csv file (table header)
     characters_to_remove = ['\n', ';', '"', '\r', '\t', '\xa0', '\x80']
 
     def __init__(self, **kwargs):
