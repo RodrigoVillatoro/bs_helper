@@ -31,4 +31,6 @@ If you need to review another page, just update the url and call **setup_scraper
 ```python
 >>> scraper.url = 'http://github.com'
 >>> scraper.setup_scraper()
+>>> scraper.soup.find('h1').string
+'Where software is built'
 ```
