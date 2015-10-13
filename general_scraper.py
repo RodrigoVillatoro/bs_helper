@@ -49,17 +49,15 @@ class GeneralScraper:
             my_writer = csv.writer(csvfile, delimiter='\n')
             my_writer.writerow(rows_to_write)
 
-    def clean_string(self, string, characters_to_remove):
+    def clean_string(self, string):
         """
         Will clean a string by removing unwanted characters.
         :param string: The string we want to clean.
         :type string: str
-        :param characters_to_remove: Characters that will be removed.
-        :type characters_to_remove: list
         :return: clean string
         """
         string = string.strip()
-        for character in characters_to_remove:
+        for character in self.characters_to_remove:
             string = string.replace(character, '')
         return string
 
