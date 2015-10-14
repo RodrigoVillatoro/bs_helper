@@ -10,7 +10,7 @@ The goal of this file is to quickly setup a scraper to understand how a webpage 
 >>> from general_scraper import GeneralScraper
 ```
 
-2) Make an instance of **GeneralScraper**, and assign the url that you want to scraper: 
+2) Make an instance of **GeneralScraper**, and assign the url that you want to scrape: 
 ```python
 >>> scraper = GeneralScraper()
 >>> scraper.url = 'http://httpbin.org/get'
