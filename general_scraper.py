@@ -4,14 +4,17 @@ import datetime
 import os
 import random
 import requests
+import sys
 import time
+
+res = ''
+soup = ''
+directory = ''
+characters_to_remove = ['\n', ';', '"', '\r', '\t', '\xa0', '\x80']
 
 
 class GeneralScraper:
     url = ''
-    res = ''
-    soup = ''
-    directory = ''
 
     date_format = '%d_%b_%Y'
     today = datetime.datetime.today().strftime(date_format)
@@ -23,9 +26,9 @@ class GeneralScraper:
 
     file_header = []  # First row of the csv file (table header)
 
-    def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+    def __init__(self, url):
+        self.url = url
+        self.setup_scraper()
 
     def write_document(self, document_title, rows_to_write):
         """
@@ -35,12 +38,12 @@ class GeneralScraper:
         :param rows_to_write: Data to be written to the file.
         :type rows_to_write: list
         """
-
+        global directory
         doc_name = '{}_{}.csv'.format(document_title, self.today)
 
-        if self.directory:
-            os.makedirs(self.directory, exist_ok=True)
-            path_and_doc_name = os.path.join(self.directory, os.path.basename(doc_name))
+        if directory:
+            os.makedirs(directory, exist_ok=True)
+            path_and_doc_name = os.path.join(directory, os.path.basename(doc_name))
         else:
             path_and_doc_name = doc_name
 
@@ -53,39 +56,37 @@ class GeneralScraper:
         Setups the scraper and saves the response and soup object to
         global variables that can later be referenced.
         """
+        global res
+        global soup
+
         if self.url:
-            self.res = requests.get(self.url, headers=self.headers)
-            self.soup = bs4.BeautifulSoup(self.res.text, 'html.parser')
+            res = requests.get(self.url, headers=self.headers)
+            soup = bs4.BeautifulSoup(res.text, 'html.parser')
 
 
-def clean_string(string, characters_to_remove=None):
+def clean_string(string):
     """
     Will clean a string by removing unwanted characters.
     :param string: The string we want to clean.
     :type string: str
     :return: string without unwanted characters.
     """
+    global characters_to_remove
     string = string.strip()
-
-    if not characters_to_remove:
-        characters_to_remove = ['\n', ';', '"', '\r', '\t', '\xa0', '\x80']
 
     for character in characters_to_remove:
         string = string.replace(character, '')
     return string
 
 
-def clean_string_list(data_list, characters_to_remove=None):
+def clean_string_list(data_list):
     """
-    Will clean a list of string by removing unwanted characters.
+    Will clean a list of strings by removing unwanted characters.
     :param data_list: List of strings that have to be cleaned.
     :type data_list: list
     :return: tuple with strings without unwanted characters.
     """
-    temp_list = []
-    for item in data_list:
-        item = clean_string(item, characters_to_remove)
-        temp_list.append(item)
+    temp_list = list(map(clean_string, data_list))
     return tuple(temp_list)
 
 
@@ -102,3 +103,24 @@ def sleep_range_in_seconds(num1, num2):
     random_micro_seconds = random.randint(0, 9)
     wait_string = '{}.{}'.format(random_seconds, random_micro_seconds)
     time.sleep(float(wait_string))
+
+
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        print('\n')
+        print('PLEASE RUN THE SCRIPT WITH THE FOLLOWING COMMAND:')
+        print('='*60)
+        print("python -i general_scraper.py 'http://www.example.com'")
+        print('='*60)
+        print('\n')
+    else:
+        try:
+            # User entered this command: python -i general_scraper.py 'http://www.example.com'
+            scraper = GeneralScraper(str(sys.argv[1]))
+        except ConnectionError:
+            print('\n')
+            print('='*60)
+            sys.exit("Something went wrong. Check URL, connectivity, etc.")
+        else:
+            print("Use 'res' to view the response")
+            print("Use 'soup' to view the BeautifulSoup object and parse HTML")
