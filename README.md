@@ -5,13 +5,17 @@ The goal of this file is to quickly setup a scraper to understand how a webpage 
 
 ## How to use: 
 
-For quick inspection:
+
+FOR QUICK INSPECTION:
+
 1) For quick inspection, just run the following command:
 ```bash
 python -i general_scraper.py 'http://www.example.com'
 ```
 
-If you need to dive in or check multiple pages:
+
+IF YOU NEED TO CHECK MULTIPLA PAGES:
+
 1) Import the module
 ```python
 >>> from general_scraper import GeneralScraper
