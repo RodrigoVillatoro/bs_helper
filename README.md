@@ -14,7 +14,7 @@ python -i general_scraper.py 'http://www.example.com'
 ```
 
 
-IF YOU NEED TO CHECK MULTIPLA PAGES:
+IF YOU NEED TO CHECK MULTIPLE PAGES:
 
 1) Import the module
 ```python
