@@ -7,13 +7,16 @@ import sys
 class GeneralScraper:
 
     def __init__(self, url, web=True):
+        self.url = url
+        self.res = ''
+        self.soup = ''
+
         web_agent =  ("Mozilla/5.0 (Macintosh Intel Mac OS X 10.11; rv:41.0) "
                       "Gecko/20100101 Firefox/41.0")
         mobile_agent = ("Mozilla/5.0 (Linux; U; Android 4.0.3; ko-kr; LG-L160L Build/IML74K) "
                         "AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30")
         accepts = "text/html,application/xhtml+xml,application/xml; q=0.9,image/webp,*/*;q=0.8"
 
-        self.url = GeneralScraper.processed_url(url)
         if web:
             self.headers = {
                 "User-Agent": web_agent,
@@ -25,6 +28,10 @@ class GeneralScraper:
                 "Accept": accepts
             }
 
+        self.setup_scraper()
+
+    def setup_scraper(self):
+        self.url = GeneralScraper.processed_url(self.url)
         self.res = requests.get(self.url, headers=self.headers)
         self.soup = bs4.BeautifulSoup(self.res.text, 'html.parser')
 
@@ -39,42 +46,26 @@ class GeneralScraper:
             return url
 
 
-def main():
+if __name__ == '__main__':
+    global scraper
     if len(sys.argv) == 1:
         print('PLEASE RUN THE SCRIPT WITH THE FOLLOWING COMMAND:')
         print('='*60)
         print("python -i general_scraper.py 'http://www.example.com")
         print('='*60)
+        print('exit() and try again.')
     else:
         try:
             # User entered this command: python -i general_scraper.py 'http://www.example.com'
             scraper = GeneralScraper(str(sys.argv[1]))
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
             print('='*60)
-            sys.exit("Something went wrong. Check URL, connectivity, etc.")
+            print('Check your Connection or URL.')
+            print('exit() and try again.')
+        except requests.exceptions.MissingSchema:
+            print('='*60)
+            print('Check your URL.')
+            print('exit() and try again.')
         else:
             print("scraper.res: {}".format(scraper.res))
             print("Use 'scraper.soup' to view the BeautifulSoup object and parse HTML")
-
-
-if __name__ == '__main__':
-    main()
-    # if len(sys.argv) == 1:
-    #     print('\n')
-    #     print('PLEASE RUN THE SCRIPT WITH THE FOLLOWING COMMAND:')
-    #     print('='*60)
-    #     print("python -i general_scraper.py 'http://www.example.com")
-    #     print('='*60)
-    #     print('\n')
-    #     sys.exit()
-    # else:
-    #     try:
-    #         # User entered this command: python -i general_scraper.py 'http://www.example.com'
-    #         scraper = GeneralScraper(str(sys.argv[1]))
-    #     except ConnectionError:
-    #         print('\n')
-    #         print('='*60)
-    #         sys.exit("Something went wrong. Check URL, connectivity, etc.")
-    #     else:
-    #         print("Use 'res' to view the response")
-    #         print("Use 'soup' to view the BeautifulSoup object and parse HTML")
